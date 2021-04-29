@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hanul.mybatis.memberMapper.xml">
+	<insert id="joinMember" parameterType="MemberDTO">
+		insert into boardMember
+			values(#{member_id}, #{member_pw}, #{member_name},
+					 #{member_age}, #{member_gender}, #{member_email})
+	</insert>
+	
+	<select id="isMember" parameterType="MemberDTO" resultType="MemberDTO">
+		select * from boardMember where member_id = #{member_id}
+	</select>
+	
+	<select id="getAllMember" resultType="MemberDTO">
+		select * from boardMember
+	</select>
+	
+	<delete id="deleteMember" parameterType="String">
+		delete from boardMember where member_id = #{member_id}
+	</delete>
+	
+	<select id="getDetailMember" parameterType="String" resultType="MemberDTO">
+		select * from boardMember where member_id = #{member_id}
+	</select>
+	
+	<select id="getMember_pw" parameterType="String" resultType="String">
+		select member_pw from boardMember where member_id = #{id}
+	</select>
+	
+	<update id="updateMember" parameterType="MemberDTO">
+		update boardMember set
+			member_pw = #{member_pw},
+			member_name = #{member_name},
+			member_age = #{member_age},
+			member_gender = #{member_gender},
+			member_email = #{member_email}
+		where member_id = #{member_id}
+	</update>
+</mapper>
