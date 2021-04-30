@@ -1,11 +1,13 @@
 package com.board.action;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.board.study.BoardDAO;
 import com.board.study.BoardDTO;
 import com.commons.action.Action;
 import com.commons.action.ActionForward;
@@ -13,7 +15,7 @@ import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 import com.sun.media.sound.SoftSynthesizer;
 
-public class boardAddAction implements Action{
+public class BoardAddAction implements Action{
 	@Override
 	public ActionForward execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -34,16 +36,29 @@ public class boardAddAction implements Action{
 		dto.setBoard_id(multi.getParameter("board_id"));	//request 사용하면 안 됨 multi로 써야 한다
 		dto.setBoard_subject(multi.getParameter("board_subject"));
 		dto.setBoard_content(multi.getParameter("board_content"));
+
+		//System.out.println(multi.getParameter("board_id"));
+		//System.out.println(multi.getParameter("board_file"));	//null : 파일명 중복검사 수행 X
+		//System.out.println(multi.getFilesystemName((String)multi.getFileNames().nextElement()));
+		//System.out.println(dto.getBoard_id());
+		//System.out.println(dto.getBoard_subject());
+		//System.out.println(dto.getBoard_content());
+		//System.out.println(dto.getBoard_file());
 		
+		dto.setBoard_file(multi.getFilesystemName((String)multi.getFileNames().nextElement()));
 		
-		System.out.println(multi.getParameter("board_id"));
-		System.out.println(multi.getParameter("board_file"));	//null : 파일명 중복검사 수행 X
-		System.out.println(multi.getFilesystemName((String)multi.getFileNames().nextElement()));
-		System.out.println(dto.getBoard_id());
-		System.out.println(dto.getBoard_subject());
-		System.out.println(dto.getBoard_content());
-		System.out.println(dto.getBoard_file());
+		BoardDAO dao = new BoardDAO();
+		int succ = dao.boardInsert(dto);
 		
+		response.setContentType("text/html; charset=utf-8");
+		PrintWriter out = response.getWriter();
+		if(succ > 0) {
+			out.println("<script>alert('등록성공!');");
+			out.println("location.href='boardList.bo';</script>");
+		}else {
+			out.println("<script>alert('등록실패!');");
+			out.println("location.href='boardList.bo';</script>");
+		}
 		return null;
 	}
 }
